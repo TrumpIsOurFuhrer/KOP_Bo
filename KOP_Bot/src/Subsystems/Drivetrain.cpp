@@ -38,37 +38,41 @@ void Drivetrain::InitDefaultCommand() {
 void Drivetrain::DriveForwardJoystick(Joystick* joy){
 
 		/*Attempt at smooth motion below
-		 * Number 1 problem: abs is only returning int values
+		 * Number 1 problem: fabs is only returning int values
 		 * so the if statement always outputs false.
 		*/
-	float absign, cdsign;
+	float fabsign, cdsign,abinput, cdinput, accelLim;
+	abinput = joy->GetY()+.25*joy->GetZ();
+	cdinput = -1*joy->GetY()+.25*joy->GetZ();
+	accelLim = .00001;
 
-	if(aMotor->Get()==0){
-		absign = 0.5;
+	if(abinput==0){
+		fabsign = 0.5;
 	}
-	else {absign = abs(aMotor->Get())/aMotor->Get();}
+	else {fabsign = fabs(abinput)/abinput;}
 
-	if(cMotor->Get()==0){
-		cdsign = 0.5;
+	if(cdinput==0){
+		cdsign = -fabs(cMotor->Get())/cMotor->Get();
 	}
-	else {cdsign = abs(cMotor->Get())/cMotor->Get();}
+	else {cdsign = fabs(cdinput)/cdinput;}
 
-	if(std::abs(abs(joy->GetY()+.25*joy->GetZ())-abs(aMotor->Get())) > .00001){
-		aMotor->Set(aMotor->Get()+absign*.00001);}
+	//Smooth Motion implementation
+	if(fabs(abinput-aMotor->Get()) > accelLim){
+		aMotor->Set(aMotor->Get()+fabsign*accelLim);}
 	else {
-		aMotor->Set(joy->GetY()+.25*joy->GetZ());}
-	if(abs(abs(joy->GetY()+.25*joy->GetZ())-abs(bMotor->Get())) > .00001){
-		bMotor->Set(bMotor->Get()+absign*.00001);}
+		aMotor->Set(abinput);}
+	if(fabs(abinput-bMotor->Get()) > accelLim){
+		bMotor->Set(bMotor->Get()+fabsign*accelLim);}
 	else {
-		bMotor->Set(joy->GetY()+.25*joy->GetZ());}
-	if(abs(abs(joy->GetY()+.25*joy->GetZ())-abs(cMotor->Get())) > .00001){
-		cMotor->Set(cMotor->Get()+cdsign*.00001);}
+		bMotor->Set(abinput);}
+	if(fabs(cdinput-cMotor->Get()) > accelLim){
+		cMotor->Set(cMotor->Get()+cdsign*accelLim);}
 	else {
-		cMotor->Set(-1*joy->GetY()+.25*joy->GetZ());}
-	if(abs(abs(joy->GetY()+.25*joy->GetZ())-abs(dMotor->Get())) > .00001){
-		dMotor->Set(dMotor->Get()+cdsign*.00001);}
+		cMotor->Set(cdinput);}
+	if(fabs(cdinput-dMotor->Get()) > accelLim){
+		dMotor->Set(dMotor->Get()+cdsign*accelLim);}
 	else {
-		dMotor->Set(-1*joy->GetY()+.25*joy->GetZ());}
+		dMotor->Set(cdinput);}
 
 	}
 
