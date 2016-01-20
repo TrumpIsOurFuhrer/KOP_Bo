@@ -45,18 +45,18 @@ void Drivetrain::DriveForwardJoystick(Joystick* joy){
 		 * so the if statement always outputs false.
 		*/
 float fabsign, cdsign,abinput, cdinput, accelLim;
-	abinput = joy->GetY()+.25*joy->GetZ();
-	cdinput = -1*joy->GetY()+.25*joy->GetZ();
+	abinput = joy->GetY()+.25*joy->GetZ(); //  Motor orientation C A  ^
+	cdinput = -1*joy->GetY()+.25*joy->GetZ();//                  D B  |
 	accelLim = .00001;
 
 	if(abinput==0){
 		fabsign = 0.5;
 	}
-	else {fabsign = fabs(abinput)/abinput;}
+	else { abinput > 0 ? fabsign = 1 : fabsign = -1;}
 
 	if(cdinput==0){
-		cdsign = -fabs(cMotor->Get())/cMotor->Get();
-	}
+		cdsign = -fabs(cMotor->Get())/cMotor->Get();  //Not sure why this is here, seems
+	}//                                                 like it could create errors
 	else {cdsign = fabs(cdinput)/cdinput;}
 
 	//Smooth Motion implementation
