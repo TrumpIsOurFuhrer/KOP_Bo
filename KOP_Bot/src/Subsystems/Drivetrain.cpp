@@ -45,10 +45,13 @@ void Drivetrain::DriveForwardJoystick(Joystick* joy){
 		 * so the if statement always outputs false.
 		*/
 float fabsign, cdsign,abinput, cdinput, accelLim;
-	abinput = joy->GetY()+.25*joy->GetZ(); //  Motor orientation C A  ^
-	cdinput = -1*joy->GetY()+.25*joy->GetZ();//                  D B  |
-	accelLim = .00001;
 
+//Uses Lt for reverse and RT for forward
+
+	abinput = joy->GetTwist()-joy->GetThrottle()+.25*joy->GetZ(); //  Motor orientation C A  ^
+	cdinput = -1*joy->GetTwist()+joy->GetThrottle()+.25*joy->GetZ();//                  D B  |
+	accelLim = .00001;
+joy->GetThrottle();
 	if(abinput==0){
 		fabsign = 0.5;
 	}
